@@ -8,6 +8,14 @@
 # Unzip the original dataset and load it into a data.frame variable.
 library(utils)
 unzip("activity.zip", overwrite = FALSE)
+```
+
+```
+## Warning in unzip("activity.zip", overwrite = FALSE): not overwriting file
+## './activity.csv
+```
+
+```r
 activity <- read.csv("activity.csv", colClasses=c("numeric", "Date", "numeric"))
 summary(activity)
 ```
@@ -232,27 +240,27 @@ The impact of imputing data causes a slight difference in the average and median
 
 
 ```r
-# Aggregate data and find position of maximum value of steps after imputation.
-average_steps_per_interval_imputed <- aggregate(steps ~ interval, activity_copy, FUN = mean)
+# Add day type column to imputed dataset.
 activity_copy$daytype <- as.factor(ifelse(weekdays(activity_copy$date)
   %in% c("Saturday", "Sunday"), "Weekend", "Weekday")) 
 ```
 
-## What is the average daily activity pattern?
+### What is the average daily activity pattern, again?
 
 
 ```r
-# Aggregate data and find position of maximum value of steps (per day type).
+# Subset data for plotting.
 weekend <- subset(activity_copy, subset = activity_copy$daytype == "Weekend")
 average_steps_per_interval_weekend <- aggregate(steps ~ interval, weekend, FUN = mean)
 weekday <- subset(activity_copy, subset = activity_copy$daytype == "Weekday")
 average_steps_per_interval_weekday <- aggregate(steps ~ interval, weekday, FUN = mean)
 ```
 
-### Time series plot of the 5-minute interval and the average number of steps taken, averaged across day type.
+### Time series plot of the 5-minute interval and the average number of steps taken, per day type.
 
 
 ```r
+# Create a 2-row panel and add plots
 par(mfrow = c(2, 1))
 plot(steps ~ interval, average_steps_per_interval_weekend, type = "l", main = "Daily activity pattern weekends",
   xlab = "Interval", ylab = "Average no. of steps")
@@ -263,3 +271,38 @@ plot(steps ~ interval, average_steps_per_interval_weekday, type = "l", main = "D
 ![](PA1_template_files/figure-html/timeseries_2-1.png) 
 
 In the plots there it can be noticed that people tends to walk **more** on weekends. The average is noticeably higher on saturdays and sundays.
+
+Let's take summaries to confirm the previous affirmation:
+
+
+```r
+# Summarize data to help interpretation of plot.
+summary(average_steps_per_interval_weekend)
+```
+
+```
+##     interval          steps        
+##  Min.   :   0.0   Min.   :  0.875  
+##  1st Qu.: 588.8   1st Qu.:  2.172  
+##  Median :1177.5   Median : 33.188  
+##  Mean   :1177.5   Mean   : 43.250  
+##  3rd Qu.:1766.2   3rd Qu.: 75.594  
+##  Max.   :2355.0   Max.   :167.500
+```
+
+```r
+summary(average_steps_per_interval_weekday)
+```
+
+```
+##     interval          steps         
+##  Min.   :   0.0   Min.   :  0.9333  
+##  1st Qu.: 588.8   1st Qu.:  3.2222  
+##  Median :1177.5   Median : 26.7444  
+##  Mean   :1177.5   Mean   : 36.5531  
+##  3rd Qu.:1766.2   3rd Qu.: 51.7389  
+##  Max.   :2355.0   Max.   :231.2889
+```
+
+- **Mean and median** for steps during weekends are: 43.25 and 33.1875.
+- **Mean and median** for steps during weekdays are: 36.5530864 and 26.7444444.
