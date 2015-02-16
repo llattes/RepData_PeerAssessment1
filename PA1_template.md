@@ -8,14 +8,6 @@
 # Unzip the original dataset and load it into a data.frame variable.
 library(utils)
 unzip("activity.zip", overwrite = FALSE)
-```
-
-```
-## Warning in unzip("activity.zip", overwrite = FALSE): not overwriting file
-## './activity.csv
-```
-
-```r
 activity <- read.csv("activity.csv", colClasses=c("numeric", "Date", "numeric"))
 summary(activity)
 ```
@@ -270,4 +262,4 @@ plot(steps ~ interval, average_steps_per_interval_weekday, type = "l", main = "D
 
 ![](PA1_template_files/figure-html/timeseries_2-1.png) 
 
-
+In the plots there it can be noticed that people tends to walk **more** on weekends. The average is noticeably higher on saturdays and sundays.
